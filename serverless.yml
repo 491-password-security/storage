@@ -1,0 +1,286 @@
+service: pws
+
+provider:
+  name: aws
+  runtime: go1.x
+  region: us-west-2
+  tracing:
+    apiGateway: true
+    lambda: true
+  memorySize: 128
+  environment:
+    REGION: "us-west-2"
+  apiGateway:
+    apiKeys:
+      - ${opt:stage}-pws
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:BatchWriteItem
+        - dynamodb:BatchGetItem
+        - dynamodb:ListTables
+        - dynamodb:DescribeTables
+      Resource: "arn:aws:dynamodb:us-west-2:*:table/*"
+    - Effect: Allow
+      Action:
+        - "s3:*"
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - sns:Publish
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+        - lambda:InvokeAsync
+      Resource: "*"
+custom:
+  STAGE: ${opt:stage, self:provider.stage}
+  SERVICE_NAME: pws
+  ADDITIONAL_INFO_HEADER: pws
+package:
+  exclude:
+    - ./**
+  include:
+    - ./bin/**
+
+functions:
+  authorize:
+    handler: bin/Authentication
+    environment:
+      ENVIRONMENT: aws
+      REFRESH_SECRET: mcmvmkmsdnfsdmfdsjf
+      ACCESS_SECRET: jdnfksdmfksd
+      JWT_DB: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}-jwtToken
+  main-module:
+    handler: bin/Main
+    environment:
+      ENVIRONMENT: aws
+      SERVICE_STAGE_NAME: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}
+      ADDITIONAL_INFO_HEADER: ${self:custom.ADDITIONAL_INFO_HEADER}
+      REFRESH_SECRET: mcmvmkmsdnfsdmfdsjf
+      ACCESS_SECRET: jdnfksdmfksd
+      PasswordResetTokenDB: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}-password-reset-token-db
+      REFRESH_TOKEN_DB: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}-UserRefreshToken
+      SECURE_TOKEN_DB: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}-SecureToken
+      USER_DB: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}-User
+      JWT_DB: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}-jwtToken
+      REQUEST_RECORD_DB: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}-RequestRecord
+    events:
+      - http:
+          path: /auth/sign-up
+          method: post
+          cors:
+            origin: '*' # <-- Specify allowed origin
+            headers: '*'
+      - http:
+          path: /auth/sign-in
+          method: post
+          cors:
+            origin: '*' # <-- Specify allowed origin
+            headers: '*'
+      - http:
+          path: /auth/refresh
+          method: post
+          cors:
+            origin: '*' # <-- Specify allowed origin
+            headers: '*'
+      - http:
+          path: /auth/revoke
+          method: delete
+          cors:
+            origin: '*' # <-- Specify allowed origin
+            headers: '*'
+          authorizer:
+            name: authorize
+            resultTtlInSeconds: 0
+      - http:
+          path: /auth/all-users
+          method: get
+          cors:
+            origin: '*'
+            headers: '*'
+      - http:
+          path: /auth/delete-user
+          method: post
+          cors:
+            origin: '*'
+            headers: '*'
+      - http:
+          path: /auth/edit-user
+          method: post
+          cors:
+            origin: '*'
+            headers: '*'
+      - http:
+          path: /auth/reset-password
+          method: post
+          cors:
+            origin: '*'
+            headers: '*'
+resources:
+  Resources:
+    RefreshTokenTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        TableName: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}-UserRefreshToken
+        AttributeDefinitions:
+          - AttributeName: refreshToken
+            AttributeType: S
+        KeySchema:
+          - AttributeName: refreshToken
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    SecureTokenTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}-SecureToken
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        TableName: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}-User
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    JwtTableData:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        TableName: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}-jwtToken
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    RequestRecordTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        PointInTimeRecoverySpecification:
+          PointInTimeRecoveryEnabled: true
+        TableName: ${self:custom.SERVICE_NAME}-${self:custom.STAGE}-RequestRecord
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: requestContext-requestTimeEpoch
+            AttributeType: N
+          - AttributeName: headers-x-os
+            AttributeType: S
+          - AttributeName: body-measurementId
+            AttributeType: S
+          - AttributeName: body-userId
+            AttributeType: S
+          - AttributeName: http-response-status
+            AttributeType: N
+          - AttributeName: resource
+            AttributeType: S
+          - AttributeName: headers-x-model
+            AttributeType: S
+          - AttributeName: headers-x-package-name
+            AttributeType: S
+          - AttributeName: body-isLastDetectionRequest
+            AttributeType: S
+          - AttributeName: headers-x-app-version
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+          - AttributeName: requestContext-requestTimeEpoch
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: headers-x-os-requestContext-requestTimeEpoch-index
+            KeySchema:
+              - AttributeName: headers-x-os
+                KeyType: HASH
+              - AttributeName: requestContext-requestTimeEpoch
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: body-measurementId-id-index
+            KeySchema:
+              - AttributeName: body-measurementId
+                KeyType: HASH
+              - AttributeName: id
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: body-userId-requestContext-requestTimeEpoch-index
+            KeySchema:
+              - AttributeName: body-userId
+                KeyType: HASH
+              - AttributeName: requestContext-requestTimeEpoch
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: http-response-status-requestContext-requestTimeEpoch-index
+            KeySchema:
+              - AttributeName: http-response-status
+                KeyType: HASH
+              - AttributeName: requestContext-requestTimeEpoch
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: resource-requestContext-requestTimeEpoch-index
+            KeySchema:
+              - AttributeName: resource
+                KeyType: HASH
+              - AttributeName: requestContext-requestTimeEpoch
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: headers-x-model-requestContext-requestTimeEpoch-index
+            KeySchema:
+              - AttributeName: headers-x-model
+                KeyType: HASH
+              - AttributeName: requestContext-requestTimeEpoch
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: headers-x-package-name-requestContext-requestTimeEpoch-index
+            KeySchema:
+              - AttributeName: headers-x-package-name
+                KeyType: HASH
+              - AttributeName: requestContext-requestTimeEpoch
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: body-isLastDetectionRequest-requestContext-requestTimeEpoch-index
+            KeySchema:
+              - AttributeName: body-isLastDetectionRequest
+                KeyType: HASH
+              - AttributeName: requestContext-requestTimeEpoch
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: headers-x-app-version-requestContext-requestTimeEpoch-index
+            KeySchema:
+              - AttributeName: headers-x-app-version
+                KeyType: HASH
+              - AttributeName: requestContext-requestTimeEpoch
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
