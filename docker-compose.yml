@@ -1,0 +1,55 @@
+version: "3.0"
+
+services:
+  postgres:
+    image: postgres:13.2
+    container_name: "postgres"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: jwt_auth
+    ports:
+      - "5432:5432"
+    networks:
+      - xmyc-network
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+  mongo:
+    image: mongo:latest
+    container_name: "mongo"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - xmyc-network
+    volumes:
+      - mongodb_data_container:/data/db
+  api:
+    build: .
+    container_name: "membership-api"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+      - mongo
+    networks:
+      - xmyc-network
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-ui
+    ports:
+      - "80:8080"
+    volumes:
+      - ./swagger:/usr/share/nginx/html/swagger
+    environment:
+      API_URL: swagger/api.yaml
+volumes:
+  database_postgres:
+  mongodb_data_container:
+
+networks:
+  xmyc-network:
+    driver: bridge
+
