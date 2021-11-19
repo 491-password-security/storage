@@ -84,34 +84,7 @@ api.add_resource(auth_service.AllUsers, '/users')
 
 api.add_resource(auth_service.PersonalInfo, '/user-info')
 
-api.add_resource(auth_service.ChildCreation, '/child/create')
-
-api.add_resource(auth_service.ChildInfo, '/child')
-
-api.add_resource(auth_service.ChildList, '/child-list')
-
 api.add_resource(event_service.SimpleMongoTest, '/testMongo')
 
-api.add_resource(event_service.GetThemes, '/event/themes')
-
-api.add_resource(event_service.GetEventDetailsById, '/event/details')
-
-api.add_resource(event_service.GetEventList, '/event/list')
-
-api.add_resource(event_service.GetEventListWithDistance, '/event/list-with-distance')
-
-api.add_resource(event_service.GetRegisteredEventList, '/event/registered-list')
-
-api.add_resource(event_service.AddParticipant, '/event/add-participant')
-
-api.add_resource(event_service.RemoveParticipant, '/event/remove-participant')
-
-api.add_resource(event_service.AddFavourites, '/event/add-favourites')
-
-api.add_resource(event_service.RemoveFavourites, '/event/remove-favourites')
-
-api.add_resource(event_service.GradeEvent, '/event/grade')
-
-api.add_resource(event_service.GetFavouriteEvents, '/event/favourite-list')
 
 

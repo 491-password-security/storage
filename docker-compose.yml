@@ -36,15 +36,17 @@ services:
       - mongo
     networks:
       - xmyc-network
-  swagger-ui:
-    image: swaggerapi/swagger-ui
-    container_name: swagger-ui
+  share1:
+    build: ./nodejs
+    container_name: "share1"
     ports:
-      - "80:8080"
-    volumes:
-      - ./swagger:/usr/share/nginx/html/swagger
-    environment:
-      API_URL: swagger/api.yaml
+      - "5002:8080"
+    depends_on:
+      - postgres
+      - mongo
+      - api
+    networks:
+      - xmyc-network
 volumes:
   database_postgres:
   mongodb_data_container:
