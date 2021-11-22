@@ -21,7 +21,6 @@ services:
       - "5000:5000"
     depends_on:
       - postgres
-      - mongo
     networks:
       - xmyc-network
   share1:

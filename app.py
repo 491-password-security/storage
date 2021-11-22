@@ -31,11 +31,11 @@ app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 sql = SQLAlchemy(app)
 
 # Pymongo cli
-client = MongoClient('mongodb://mongo:mongo@mongo:27017/?authSource=admin')
-db = client.zipzip
+#client = MongoClient('mongodb://mongo:mongo@mongo:27017/?authSource=admin')
+#db = client.zipzip
 
-mongo_events = db.events
-mongo_event_themes = db.event_themes
+#mongo_events = db.events
+#mongo_event_themes = db.event_themes
 
 # JwtManager object
 jwt = JWTManager(app)
@@ -60,7 +60,7 @@ def check_if_token_in_blacklist(decrypted_token):
 
 # Importing models and resources
 from service import auth_service
-from service import event_service
+#from service import event_service
 from models import user_models
 
 
@@ -84,7 +84,7 @@ api.add_resource(auth_service.AllUsers, '/users')
 
 api.add_resource(auth_service.PersonalInfo, '/user-info')
 
-api.add_resource(event_service.SimpleMongoTest, '/testMongo')
+#api.add_resource(event_service.SimpleMongoTest, '/testMongo')
 
 
 
