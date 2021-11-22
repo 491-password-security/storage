@@ -81,7 +81,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: mongo2
       MONGO_INITDB_ROOT_PASSWORD: mongo2
     ports:
-      - "27017:27017"
+      - "27018:27017"
     networks:
       - xmyc-network
     volumes:
@@ -93,7 +93,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: mongo3
       MONGO_INITDB_ROOT_PASSWORD: mongo3
     ports:
-      - "27017:27017"
+      - "27019:27017"
     networks:
       - xmyc-network
     volumes:
