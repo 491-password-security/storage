@@ -55,7 +55,7 @@ class UserRegistration(Resource):
 
         logging.info("Post request to '/registration'.")
 
-        email = data['email'].toLowerCase();
+        email = data['email'].lower();
 
         if not email:
             logging.error("email in the request body is null.")
@@ -107,7 +107,7 @@ class VerifyOtp(Resource):
 
         logging.info("Post request to '/login'.")
 
-        email = data['email'].toLowerCase();
+        email = data['email'].lower();
 
         if not email:
             logging.error("email in the request body is null.")
