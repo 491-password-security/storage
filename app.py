@@ -70,21 +70,14 @@ api.add_resource(auth_service.SimpleEndpointTest, '/test')
 
 api.add_resource(auth_service.UserRegistration, '/registration')
 
-api.add_resource(auth_service.UserLogin, '/request-otp')
-
-api.add_resource(auth_service.OtpVerification, '/verify-otp')
-
 api.add_resource(auth_service.UserLogoutAccess, '/logout/access')
 
 api.add_resource(auth_service.UserLogoutRefresh, '/logout/refresh')
 
 api.add_resource(auth_service.TokenRefresh, '/token/refresh')
 
-api.add_resource(auth_service.AllUsers, '/users')
-
 api.add_resource(auth_service.PersonalInfo, '/user-info')
 
-#api.add_resource(event_service.SimpleMongoTest, '/testMongo')
+api.add_resource(auth_service.SendOtp, '/send-otp')
 
-
-
+api.add_resource(auth_service.VerifyOtp, '/verify-otp')
