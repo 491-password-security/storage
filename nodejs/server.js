@@ -1,15 +1,15 @@
+
 'use strict';
 
 const express = require('express');
 const crypto = require('crypto-helper-ku');
 const {MongoClient} = require('mongodb');
 
-const uri = "mongodb://mongo:mongo@mongo:27017/?authSource=admin";
-console.log("arda");
+//const uri = "mongodb://mongo:mongo@mongo:27017/?authSource=admin";
+const uri = process.env.MONGO_URI;
+console.log(uri);
 
 const client = new MongoClient(uri);
-console.log("can");
-
 var users;
 var col;
 
@@ -17,8 +17,8 @@ var col;
     try {
         await client.connect();
         console.log("connected");
-        const db = client.db('share3');
-        col = db.collection('share4');
+        const db = client.db('s3');
+        col = db.collection('s4');
         users = await col.find({}).toArray();
         console.log(users);
     } catch (err) {

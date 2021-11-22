@@ -14,18 +14,6 @@ services:
       - xmyc-network
     volumes:
       - database_postgres:/var/lib/postgresql/data
-  mongo:
-    image: mongo:latest
-    container_name: "mongo"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: mongo
-      MONGO_INITDB_ROOT_PASSWORD: mongo
-    ports:
-      - "27017:27017"
-    networks:
-      - xmyc-network
-    volumes:
-      - mongodb_data_container:/data/db
   api:
     build: .
     container_name: "membership-api"
@@ -39,18 +27,83 @@ services:
   share1:
     build: ./nodejs
     container_name: "share1"
+    environment: 
+      - MONGO_URI: "mongodb://mongo1:mongo1@mongo1:27017/?authSource=admin"
+    ports:
+      - "5001:8080"
+    depends_on:
+      - postgres
+      - mongo1
+      - api
+    networks:
+      - xmyc-network
+  share2:
+    build: ./nodejs
+    container_name: "share2"
+    environment: 
+      - MONGO_URI: "mongodb://mongo2:mongo2@mongo2:27018/?authSource=admin"
     ports:
       - "5002:8080"
     depends_on:
       - postgres
-      - mongo
+      - mongo2
       - api
     networks:
       - xmyc-network
+  share3:
+    build: ./nodejs
+    container_name: "share3"
+    environment: 
+      - MONGO_URI: "mongodb://mongo3:mongo3@mongo3:27019/?authSource=admin"
+    ports:
+      - "5003:8080"
+    depends_on:
+      - postgres
+      - mongo3
+      - api
+    networks:
+      - xmyc-network
+  mongo1:
+    image: mongo:latest
+    container_name: "mongo1"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo1
+      MONGO_INITDB_ROOT_PASSWORD: mongo1
+    ports:
+      - "27017:27017"
+    networks:
+      - xmyc-network
+    volumes:
+      - mongodb_data_container1:/data/db
+  mongo2:
+    image: mongo:latest
+    container_name: "mongo2"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo2
+      MONGO_INITDB_ROOT_PASSWORD: mongo2
+    ports:
+      - "27018:27017"
+    networks:
+      - xmyc-network
+    volumes:
+      - mongodb_data_container2:/data/db
+  mongo3:
+    image: mongo:latest
+    container_name: "mongo3"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo3
+      MONGO_INITDB_ROOT_PASSWORD: mongo3
+    ports:
+      - "27019:27017"
+    networks:
+      - xmyc-network
+    volumes:
+      - mongodb_data_container3:/data/db
 volumes:
   database_postgres:
-  mongodb_data_container:
-
+  mongodb_data_container1:
+  mongodb_data_container2:
+  mongodb_data_container3:
 networks:
   xmyc-network:
     driver: bridge
