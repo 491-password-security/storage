@@ -28,7 +28,7 @@ services:
     build: ./nodejs
     container_name: "share1"
     environment: 
-      - MONGO_URI: "mongodb://mongo1:mongo1@mongo1:27017/?authSource=admin"
+      - MONGO_URI: mongodb://mongo1:mongo1@mongo1:27017/?authSource=admin
     ports:
       - "5001:8080"
     depends_on:
@@ -41,7 +41,7 @@ services:
     build: ./nodejs
     container_name: "share2"
     environment: 
-      - MONGO_URI: "mongodb://mongo2:mongo2@mongo2:27018/?authSource=admin"
+      - MONGO_URI: mongodb://mongo2:mongo2@mongo2:27018/?authSource=admin
     ports:
       - "5002:8080"
     depends_on:
@@ -54,7 +54,7 @@ services:
     build: ./nodejs
     container_name: "share3"
     environment: 
-      - MONGO_URI: "mongodb://mongo3:mongo3@mongo3:27019/?authSource=admin"
+      - MONGO_URI: mongodb://mongo3:mongo3@mongo3:27019/?authSource=admin
     ports:
       - "5003:8080"
     depends_on:
