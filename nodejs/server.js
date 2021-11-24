@@ -33,14 +33,15 @@ const HOST = '0.0.0.0';
 
 // App
 const app = express();
-app.get('/save-password-share/:key/:value', (req, res) => {
+app.get('/save-password-share/:key/:value/:iv', (req, res) => {
     
     col.insertOne({
         key: req.params.key,
-        value: req.params.value
+        value: req.params.value,
+        iv: req.params.iv
     });
 
-    res.send(req.params.key + ':' + req.params.value);
+    res.send(req.params.key + ':' + req.params.value + ':' + req.params.iv);
 });
 
 app.get('/get-password-share/:key', (req, res) => {
@@ -51,7 +52,7 @@ app.get('/get-password-share/:key', (req, res) => {
         if (err) {
             console.log(err);
         } else {
-            res.send(doc.value);
+            res.send(doc.value + ':' + doc.iv);
         }
     });
 });
