@@ -13,7 +13,7 @@ services:
     networks:
       - xmyc-network
     volumes:
-      - database_postgres:/var/lib/postgresql/data
+      - database_postgres1:/var/lib/postgresql/data
   api:
     build: .
     container_name: "membership-api"
@@ -99,7 +99,7 @@ services:
     volumes:
       - mongodb_data_container3:/data/db
 volumes:
-  database_postgres:
+  database_postgres1:
   mongodb_data_container1:
   mongodb_data_container2:
   mongodb_data_container3:
