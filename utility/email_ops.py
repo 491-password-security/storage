@@ -26,9 +26,9 @@ class Mail:
                   "Name": ""
                 }
               ],
-              "Subject": "Veviski Password Reset",
+              "Subject": "Cryopass",
               "TextPart": str(new_pass),
-              "HTMLPart": "<h3>Your password has been reset</h3>" + str(new_pass),
+              "HTMLPart": "<h3>Your one time pass code is: </h3>" + str(new_pass),
               "CustomID": "AppGettingStartedTest"
             }
           ]
