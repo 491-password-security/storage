@@ -1,0 +1,5 @@
+// @license MIT
+
+// @preserve author Alexander Stetsyuk
+
+// @preserve author Glenn Rempe <glenn@rempe.us>
