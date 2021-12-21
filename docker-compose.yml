@@ -32,7 +32,7 @@ services:
     environment: 
       - MONGO_URI=mongodb://mongo1:mongo1@mongo1:27017/?authSource=admin
     ports:
-      - "5001:8080"
+      - "5001:3000"
     depends_on:
       - postgres
       - mongo1
@@ -46,7 +46,7 @@ services:
     environment: 
       - MONGO_URI=mongodb://mongo2:mongo2@mongo2:27017/?authSource=admin
     ports:
-      - "5002:8080"
+      - "5002:3000"
     depends_on:
       - postgres
       - mongo2
@@ -60,7 +60,7 @@ services:
     environment: 
       - MONGO_URI=mongodb://mongo3:mongo3@mongo3:27017/?authSource=admin
     ports:
-      - "5003:8080"
+      - "5003:3000"
     depends_on:
       - postgres
       - mongo3
