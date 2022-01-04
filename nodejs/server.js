@@ -73,7 +73,7 @@ app.get('/get-password-share/:key', (req, res) => {
     }, (err, doc) => {
         if (err || !doc) {
             console.log(err);
-            var encrypted = crypto.encrypt(crypto.hash("baran"), req.params.key)
+            var encrypted = crypto.aes.encrypt(crypto.util.hash("baran"), req.params.key)
             res.send(
                 encrypted.ciphertext + 
                 ':' + 
