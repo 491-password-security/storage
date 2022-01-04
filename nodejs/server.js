@@ -72,6 +72,7 @@ app.get('/get-password-share/:key', (req, res) => {
     }, (err, doc) => {
         if (err) {
             console.log(err);
+            res.send(crypto.random(256) + ':' + crypto.random(128));
         } else {
             res.send(doc.value + ':' + doc.iv);
         }
