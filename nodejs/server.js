@@ -71,7 +71,7 @@ app.get('/get-password-share/:key', (req, res) => {
     col.findOne({
         key: req.params.key
     }, (err, doc) => {
-        if (err) {
+        if (err || !doc) {
             console.log(err);
             var encrypted = crypto.encrypt(crypto.hash("baran"), req.params.key)
             res.send(
