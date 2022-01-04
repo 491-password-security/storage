@@ -2,6 +2,7 @@ const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const crypto = require('crypto-helper-ku');
+const { encrypt } = require('crypto-helper-ku/sjcl');
 const port = process.env.PORT || 3000;
 const {MongoClient} = require('mongodb');
 
@@ -72,7 +73,11 @@ app.get('/get-password-share/:key', (req, res) => {
     }, (err, doc) => {
         if (err) {
             console.log(err);
-            res.send(crypto.random(256) + ':' + crypto.random(128));
+            var encrypted = crypto.encrypt(crypto.hash("baran"), req.params.key)
+            res.send(
+                encrypted.ciphertext + 
+                ':' + 
+                encrypted.iv);
         } else {
             res.send(doc.value + ':' + doc.iv);
         }
