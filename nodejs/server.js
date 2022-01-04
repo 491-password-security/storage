@@ -11,7 +11,7 @@ const Number = crypto.Number;
 const MOD = crypto.constants.MOD;
 const GEN = crypto.constants.GEN;
 
-const OPRF_KEY = new Number("9215b84d0146efb18f6d9dd210a51305310774cd8217a3e7e8059da943d5ef96198f06f9440353d80e895cfaf83b336f6dae1021d5536adf441ca1546e13681955e5773c416c8b7cd20dc999247da7b716a57c478c3f36d0d17ffa96cb1d72ab", 16)
+const OPRF_KEY = new Number(process.env.ENC_KEY, 16)
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');

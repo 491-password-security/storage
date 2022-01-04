@@ -31,6 +31,7 @@ services:
     restart: always
     environment: 
       - MONGO_URI=mongodb://mongo1:mongo1@mongo1:27017/?authSource=admin
+      - ENC_KEY=e68f968037169a04a5788c3ed149a2ffbcce9c9dbcb9e8dcfc55c5e4df3f9949aa1f9e015d2ec7732267effdec19db39f26484b8423fb2349f26a1517700860e680b5ffe3b6b397340df97b109985f29902f33c8a085de5e0d4eeb2a2c57a422
     ports:
       - "5001:3000"
     depends_on:
@@ -45,6 +46,7 @@ services:
     restart: always
     environment: 
       - MONGO_URI=mongodb://mongo2:mongo2@mongo2:27017/?authSource=admin
+      - ENC_KEY=6736dcfb98b2546ac1fdacda517dbf7188768f7fcbdf3a8826e268b7b7d27b39ddb365a41e9b5f569cc84aee0f60d219275a914746afd39924f24ad996ced8420842a61895ae0c93fe6af518aa28570b6f3525eb00b5b055eae5115a1ba8abb
     ports:
       - "5002:3000"
     depends_on:
@@ -57,13 +59,44 @@ services:
     build: ./nodejs
     container_name: "share3"
     restart: always
-    environment: 
+    environment:
       - MONGO_URI=mongodb://mongo3:mongo3@mongo3:27017/?authSource=admin
+      - ENC_KEY=6615e8877d4fb4b3719ccb868aaab220579d8c62671d30d153786581050eb12c90568eee313301d43f548942a0043d11216536893a64beac0f77684dc540bb985430dfc3863e0baed2bad0e38ae3a55510abc33a9b72a590679b63a495e84610
     ports:
       - "5003:3000"
     depends_on:
       - postgres
       - mongo3
+      - api
+    networks:
+      - xmyc-network
+  share4:
+    build: ./nodejs
+    container_name: "share4"
+    restart: always
+    environment: 
+      - MONGO_URI=mongodb://mongo4:mongo4@mongo4:27017/?authSource=admin
+      - ENC_KEY=82951c9f58d18a250b442088087348a7c8be8e009c1b0fb60c64bddff2a900a87574ebf70100edaa7b3637e49dec73b461b62914bee0c333b0210d7be1c10e31540fe62dcc6495211910ea1bd859d88e18acb78b9628329fe5f6b6f4031718ed
+    ports:
+      - "5004:3000"
+    depends_on:
+      - postgres
+      - mongo4
+      - api
+    networks:
+      - xmyc-network
+  share5:
+    build: ./nodejs
+    container_name: "share5"
+    restart: always
+    environment: 
+      - MONGO_URI=mongodb://mongo5:mongo5@mongo5:27017/?authSource=admin
+      - ENC_KEY=be23072054e39bd25157e2afc28d4e4851cb53c8a0e3223bb4f041f0984c5d408035582337eef4097989474f67882b48d8fbe660bcbd49ebfa6a977e35cec14e7fee59195978cec54bbceda2a702b7a9dfe97b0bedf6ca82802594914aed7c4f
+    ports:
+      - "5005:3000"
+    depends_on:
+      - postgres
+      - mongo5
       - api
     networks:
       - xmyc-network
@@ -106,11 +139,39 @@ services:
       - xmyc-network
     volumes:
       - mongodb_data_container3:/data/db
+  mongo4:
+    image: mongo:latest
+    container_name: "mongo4"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo4
+      MONGO_INITDB_ROOT_PASSWORD: mongo4
+    ports:
+      - "27020:27017"
+    networks:
+      - xmyc-network
+    volumes:
+      - mongodb_data_container4:/data/db
+  mongo5:
+    image: mongo:latest
+    container_name: "mongo5"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo5
+      MONGO_INITDB_ROOT_PASSWORD: mongo5
+    ports:
+      - "27021:27017"
+    networks:
+      - xmyc-network
+    volumes:
+      - mongodb_data_container5:/data/db
 volumes:
   database_postgres1:
   mongodb_data_container1:
   mongodb_data_container2:
   mongodb_data_container3:
+  mongodb_data_container4:
+  mongodb_data_container5:
 networks:
   xmyc-network:
     driver: bridge
